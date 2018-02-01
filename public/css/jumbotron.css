@@ -1,0 +1,252 @@
+/* Move down content because we have a fixed navbar that is 50px tall */
+a {
+	text-decoration: none;
+}
+a:hover{
+	text-decoration: none;
+}
+
+h1,h2{
+	padding: 0;
+	margin: 0;
+}
+
+.clearfix {
+	clear: both;
+}
+
+body {
+  padding-top: 50px;
+}
+
+.fl{
+	float: left;
+}
+
+.fr{
+	float: right;
+}
+
+.show {
+	display: inline-block;
+}
+
+.avatar_l {
+	display: inline-block;
+	width: 100px;
+	height: 100px;
+	border-radius: 50px;
+}
+.avatar_s {
+	display: inline-block;
+	width: 40px;
+	height: 40px;
+	border-radius: 20px;
+}
+
+.jumbotron {
+	min-height: 323px;
+}
+
+#content {
+	resize: none;
+}
+
+#fabiao {
+	float: right;
+	position: relative;
+	right: -20px;
+}
+
+.box {
+	border: 1px solid #ccc;
+	border-radius: 3px;
+	box-shadow: 1px 1px 10px rgba(0,0,0,0.25);
+	margin-bottom: 10px;
+	padding: 10px 20px;
+}
+
+.ellipsis {
+	overflow: hidden;  
+    text-overflow: ellipsis;  
+    display: -webkit-box;  
+    -webkit-line-clamp:3;  
+    -webkit-box-orient: vertical; 
+}
+
+.content {
+	margin-top: 10px;
+	text-indent: 2em;
+	white-space: pre-wrap;
+	white-space: -moz-pre-wrap;
+	white-space: -pre-wrap;
+	white-space: -o-pre-wrap;
+	*word-wrap: break-word;
+	*white-space : normal ;
+     
+}
+
+.pageWrap {
+	float: left;
+	position: relative;
+	left: 50%;
+}
+.pagination {
+	position: relative;
+	left: -50%;
+}
+.index{
+	min-height: 160px;
+}
+
+.foldBtn{
+	display: none;
+}
+
+/* 同用 */
+body {
+	padding-top: 50px;
+}
+.one{
+	border-bottom: 1px solid #ccc;
+	margin-bottom: 20px;
+}
+.titleBox{
+	float: left;
+	text-align: center;
+	position: relative;
+	left: 50%;
+	/* margin-top: 30px; */
+}
+.titleContent{
+	position: relative;
+	left: -50%;
+}
+.title {
+	display: inline-block;
+	line-height: 100px;
+	position: relative;
+	top: 8px;
+}
+.oneWrap{
+	margin-top: 20px;
+	clear: both;
+}
+.main {
+	min-height: 517px;
+}
+
+
+.blank{
+	clear: both;
+}
+.blank h2{
+	width: 330px;
+	margin:0 auto;
+	position: relative;
+	top:120px;
+}
+/* 通用结束 */
+.index .blank h2{
+	width: 510px;
+	top: 20px;
+}
+
+.date{
+	line-height: 30px;
+	color: #ccc;
+}
+
+footer {
+	margin-top: 20px;
+	height: 60px;
+	text-align: center;
+	background-color: #efeff2;
+}
+
+footer p {
+	display: inline-block;
+	margin: 0 auto;
+	margin-top: 20px;
+    font-size: 14px;
+    color: #999;
+}
+
+.upAvatar {
+	margin-top: 90px;
+}
+
+#touxiang {
+	display: inline-block;
+	opacity: 0;
+	width: 80px;
+}
+
+.selAvatar {
+	position: relative;
+	left:60px;
+	cursor: pointer;
+	color: dodgerblue;
+}
+
+.jcBox {
+	border: 1px solid #bbb;
+	border-radius: 4px;
+	box-shadow: 1px 1px 10px rgba(0,0,0,0.25);
+	margin: 2em auto;
+	padding:2em 8em;
+	/* min-height: 500px; */
+}
+
+/* .jcBox .jcrop-holder {
+	margin-left: 80px;
+} */
+
+.jcrop-holder #preview-pane {
+	right: -330px;
+	z-index: 1000;
+}
+
+#preview-pane .preview-container {
+	width: 200px;
+	height: 200px;
+	overflow: hidden;
+}
+
+#cutBtn {
+	margin-top: 20px;
+}
+
+.mainImg {
+	width: 600px;
+	height: auto;
+}
+
+.evalute {
+	cursor: pointer;
+}
+
+.evalute:hover .evaluteTip{
+	display: inline-block;
+}
+
+.evalute:hover .evaluteNum {
+	display: none;
+}
+
+.evaluteTip {
+	display: none;
+	width: 30px;
+	text-align: center;
+	position: relative;
+	top: -1px;
+}
+
+.evaluteNum {
+	display: inline-block;
+	width: 30px;
+	text-align: center;
+	position: relative;
+	top: -1px;
+}
+

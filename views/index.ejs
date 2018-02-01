@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>班级说说</title>
+    <link rel="icon" href="/favicon.ico">
+	 <!-- Bootstrap core CSS -->
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom styles for this template -->
+    <link href="/css/jumbotron.css" rel="stylesheet">
+
+    <script src="/js/jquery-1.11.3.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+    <script src="/js/underscore-noflect.js"></script>
+</head>
+<body>
+<% include header.ejs %>
+
+
+<div class="jumbotron">
+    <% if(!login){ %>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-6">
+                    <h1>
+                        欢迎！
+                    </h1>
+
+                    <p>班级说说是我们交流的园地，欢迎注册！</p>
+
+                    <p><a class="btn btn-primary btn-lg" href="/regist" role="button">注册</a></p>
+                </div>
+                <div class="col-lg-6">
+                    <p>已有账号登陆</p>
+
+                    <form>
+                        <div class="form-group">
+                            <label for="username">用户名</label>
+                            <input type="text" class="form-control" id="username" placeholder="用户名，可以是中文，不能和别人重复">
+                        </div>
+                        <div class="form-group">
+                            <label for="password">密码</label>
+                            <input type="password" class="form-control" id="password" placeholder="密码，至少6位">
+                        </div>
+                        <button type="button" id="denglu" class="btn btn-success">登陆</button>
+                    </form>
+                    <div class="alert alert-danger" role="alert" id="cuowukuang" style="display:none;"></div>
+                </div>
+            </div>
+        </div>
+    <% }else{ %>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-1 col-lg-offset-2">
+                    <a href="/user/<%= username %>"><img class="avatar avatar_l" src="/avatar/<%= avatar %>" alt="头像"/></a>
+                </div>
+                <div class="col-lg-6 col-lg-offset-1">
+                    <p><%= username %></p>
+                    <textarea name="content" id="content" cols="80" rows="4"></textarea>
+                    <button type="button" id="fabiao" class="btn btn-success" data-id="">发表说说</button>
+                </div>
+            </div>
+        </div>
+    <% } %>
+</div>
+<div class="container index">
+    
+    <script type="text/javascript">
+        //分页条的Ajax
+        $.get("/getshuoshuoamount", function (result) {
+            var amount = parseInt(result);
+            //总页数
+            pageamount = Math.ceil(amount / 6);
+            if(pageamount) {
+                $(".pagination").append('<li class="disabled"><a href="javascript:void(0);" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a></li>')
+                for (var i = 0; i < pageamount; i++) {
+                    $(".pagination").append("<li><a href='javascript:void(0);'>" + (i+1) + "</a></li>");
+                }
+                $(".pagination").append('<li><a href="javascript:void(0);" aria-label="Next"><span aria-hidden="true">&raquo;</span></a></li>')            
+                $(".pagination li:nth-child(2)").addClass("active");
+
+                $(".pager").append('<li class="previous disabled"><a href="javascript:void(0);" aria-label="Previous"><span aria-hidden="true">&larr;</span> 上一页</a></li>')
+                $(".pager").append('<li class="next"><a href="javascript:void(0);" aria-label="Next">下一页 <span aria-hidden="true">&rarr;</span></a></li>')
+                
+            }else{
+                $("#quanbushuoshuo").append('<div class="blank"><h2>还没有人发表说说，快来发表一个吧！</h2></div>');
+            }
+            
+            if(pageamount===1){
+                $(".pagination li:last").addClass("disabled");
+                $(".pageTurn .next").addClass("disabled");
+            }
+            //监听
+            $(".pagination li").click(function () {
+                var page = 0;
+                      
+                if ($(this).index() === 0) {
+                    if ($(this).hasClass("disabled")) {
+                        return;
+                    }
+                    else{
+                        page = $(".pagination li.active").index()-2;
+                        getPage(page);
+                        $(".pagination li").eq(page+1).addClass("active").siblings().removeClass("active");
+                    }
+                } else if ($(this).index() === $(".pagination li:last").index()) {
+                    if ($(this).hasClass("disabled")) {
+                        return;
+                    } else {
+                        page = $(".pagination li.active").index();
+                        getPage(page);
+                        $(".pagination li").eq(page+1).addClass("active").siblings().removeClass("active");
+                    }
+                } else if($(this).index() === $(".pagination li.active").index()){
+                    return;
+                }else {
+                    page = $(this).index() - 1;
+                    getPage(page);
+                    $(this).addClass("active").siblings().removeClass("active");
+                }
+
+                addRemoveDisabled();     
+            });
+            $(".pageTurn .pager li").click(function(){
+                if ($(this).index() === 0) {
+                    if ($(this).hasClass("disabled")) {
+                        return;
+                    }
+                    else{
+                        page = $(".pagination li.active").index() - 2;
+                        getPage(page);
+                        $(".pagination li").eq(page+1).addClass("active").siblings().removeClass("active");
+                    }
+                } else {
+                    if ($(this).hasClass("disabled")) {
+                        return;
+                    }else {
+                        page = $(".pagination li.active").index();
+                        getPage(page);
+                        $(".pagination li").eq(page+1).addClass("active").siblings().removeClass("active");
+                    }
+                }
+                addRemoveDisabled();
+            });
+            function addRemoveDisabled (){
+                if($(".pagination li.active").index() === 1){
+                    $(".pagination li:first").addClass("disabled");
+                    $(".pageTurn .previous").addClass("disabled");
+                    if($(".pagination li.active").index()!== $(".pagination li:last").index()-1){
+                        $(".pagination li:last").removeClass("disabled");
+                        $(".pageTurn .next").removeClass("disabled");
+                    }
+                }else if ($(".pagination li.active").index() === $(".pagination li:last").index() - 1) {
+                    $(".pagination li:last").addClass("disabled");
+                    $(".pageTurn .next").addClass("disabled");
+                    if ($(".pagination li.active").index() !== 1) {
+                        $(".pagination li:first").removeClass("disabled");
+                        $(".pageTurn .previous").removeClass("disabled");
+                    }
+                }else {
+                    $(".pagination li:first").removeClass("disabled");
+                    $(".pagination li:last").removeClass("disabled");
+                    $(".pageTurn .previous").removeClass("disabled");
+                    $(".pageTurn .next").removeClass("disabled");
+                }     
+            }
+        })
+    </script>
+    <!-- 20条记录 -->
+    <div class="pageTurn">
+        <ul class="pager">
+        </ul>
+    </div>
+    <div class="row" id="quanbushuoshuo">
+        
+    </div>
+    <div class="pageWrap">
+        <ul class="pagination">
+        </ul>
+    </div>
+        
+</div>
+
+<% include footer.ejs %>
+<script type="text/template" id="moban">
+    <div class="col-md-8 col-md-offset-2 grid box">
+        <h2><img class="avatar avatar_s" src="/avatar/<#=avatar#>" alt=""/><a class="postUser" href="/user/<#=username#>"><#=username#>：<a/></h2>
+
+        <p class="content ellipsis" data-id="<#= _id #>" ><#=content#></p>
+        <span><a href="/delete:<#= _id #>"></a></span>
+        <div class="clearfix">
+            <span class="date fl"><#=datetime#></span>
+            <span class="<#=btn#> fr">
+                <a class="btn btn-default btn-sm detailBtn " role="button">展开</a>
+            </span>
+        </div>
+        <# if (show === -1) { #>
+            <div>
+                <span class="evalute"><i class="glyphicon glyphicon-thumbs-up"></i><b class="evaluteTip">赞</b><b class=" evaluteNum"><#= vote #></b></span>
+                <span class="evalute"><i class="glyphicon glyphicon-thumbs-down"></i><b class="evaluteTip">踩</b><b class=" evaluteNum"><#= devote #></b></span>
+            </div>
+        <# } else if(show === 1){ #>
+            <div>
+                <span class="evalute"><i class="glyphicon glyphicon-thumbs-up"></i><b class="evaluteTip">已评</b><b class=" evaluteNum"><#= vote #></b></span>
+                <span class="evalute"><i class="glyphicon glyphicon-thumbs-down"></i><b class="evaluteTip">踩</b><b class=" evaluteNum"><#= devote #></b></span>
+            </div>
+        <# } else { #>
+            <div>
+                <span class="evalute"><i class="glyphicon glyphicon-thumbs-up"></i><b class="evaluteTip">赞</b><b class=" evaluteNum"><#= vote #></b></span>
+                <span class="evalute"><i class="glyphicon glyphicon-thumbs-down"></i><b class="evaluteTip">已评</b><b class=" evaluteNum"><#= devote #></b></span>
+            </div>
+        <# } #>
+
+    </div>
+</script>
+<script type="text/javascript">
+    var compiled = _.template($("#moban").html());
+    
+    getPage(0);
+    
+    function getPage(page){
+        $("#quanbushuoshuo").html("");
+        $.ajax({
+            "url": "/getallshuoshuo?page="+ page,
+            "type": "get",
+            "success": function(result){
+                iterator(0);
+                function iterator(i){
+                    if (i == result.length) {
+                        return;
+                    }
+                    // alert(result[i].username)
+                    $.get("/getuserinfo?username="+result[i].username,function(result2){
+                        if(result[i].content.length > 154){
+                            result[i].btn = 'show';
+                        }else{
+                            result[i].btn = 'hide';
+                        }
+                        result[i].avatar = result2.avatar;
+
+                        var username = `<%= username %>`;
+                        if(result[i].voted[username] === 0){
+                            result[i].show = 0;
+                        }else if(result[i].voted[username] === 1){
+                            result[i].show = 1;
+                        }else{
+                            result[i].show = -1;
+                        }
+
+                        
+                        var htmlstring = compiled(result[i]);
+                        $("#quanbushuoshuo").append($(htmlstring));
+                        iterator(i+1);
+                    });
+                }
+            }
+        });
+    }
+    //文本框得到焦点，错误提示小时
+    $("input").focus(function () {
+        $("#cuowukuang").fadeOut();
+    });
+    // alert(str)
+    //登陆按钮，登陆
+    $("#denglu").click(function () {
+        //注册按钮的事件，用ajax提交表单
+        $.post("/dologin", {
+            "username": $("#username").val(),
+            "password": $("#password").val()
+        }, function (result) {
+            if (result == "1") {
+                //注册成功
+                window.location = "/";
+            } else if (result == "-1") {
+                $("#cuowukuang").fadeIn();
+                $("#cuowukuang").html("用户名不存在");
+            } else if (result == "-2") {
+                $("#cuowukuang").fadeIn();
+                $("#cuowukuang").html("密码错误！");
+            }
+        });
+    });
+    $("#fabiao").click(function(){
+        var Author_id = `<%= _id %>`;
+        $.post("/post",{
+            "content": $("#content").val(),
+            "author": Author_id
+        },function(result){
+            if (result == "1") {
+                $(location).attr('href', '/');
+            }else{
+                alert("请联系管理员，发表失败");
+            }
+        });
+
+    });
+    $("#quanbushuoshuo").on("click",".detailBtn",function(){
+        $(this).parents('div').prevAll(".content").toggleClass("ellipsis");
+        if ($(this).html() === "折叠" ) {
+            $(this).html("展开");
+        } else {
+            $(this).html("折叠");
+        }
+    });
+    $("#quanbushuoshuo").on("click", ".evalute", function(){
+        var newCount = parseInt($(this).children(".evaluteNum").text()) + 1;
+        var $that = $(this);
+        if($(this).next().children(".evaluteTip").text() === "已评" || $(this).prev().children(".evaluteTip").text() === "已评" || $(this).children(".evaluteTip").text() === "已评"){
+            return;
+        }
+        // var postUser = $(this).parent().prevAll("h2").children(".postUser").text().replace("：","");
+        var postId = $(this).parent().prevAll(".content").attr("data-id");
+        // alert(postId)
+        $.get("/getShuoshuoByPostId?postId="+postId,function(result){
+            var voted = result.voted;
+            var username = `<%= username %>`;
+            if(voted[username] === 1 || voted[username] === 0){
+                return;
+            }else {
+                if($that.children(".evaluteTip").text() === "赞" && $that.next().children(".evaluteTip").text() !== "已评") {
+                    var newVote = newCount;
+                    var newDevote = parseInt($that.next().children(".evaluteNum").text());
+                    voted[username] = 1;
+                } else if($that.children(".evaluteTip").text() === "踩" && $that.prev().children(".evaluteTip").text() !== "已评"){
+                    var newDevote = newCount;
+                    var newVote = parseInt($that.prev().children(".evaluteNum").text());
+                    voted[username] = 0;                      
+                } else {
+                    return;
+                }
+            }
+            
+            voted = JSON.stringify(voted);            
+
+            $.post("/doVote",{"vote": newVote ,"devote": newDevote,"voted":voted, "postId": postId}, function(result){
+                if(result === "2") {
+                    $(location).attr('href', '/login');
+                } else {
+                    $that.children(".evaluteNum").text(newCount);
+                    $that.children(".evaluteTip").text("已评");
+                }
+            })
+
+        })
+
+        
+        
+    })
+
+</script>
+</body>
+</html>
