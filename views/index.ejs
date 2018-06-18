@@ -284,16 +284,22 @@
     });
     $("#fabiao").click(function(){
         var Author_id = `<%= _id %>`;
-        $.post("/post",{
-            "content": $("#content").val(),
-            "author": Author_id
-        },function(result){
-            if (result == "1") {
-                $(location).attr('href', '/');
-            }else{
-                alert("请联系管理员，发表失败");
-            }
-        });
+        if($("#content").val() == ''){
+            alert("发表内容不能为空！")
+            return;
+        }else{
+            $.post("/post",{
+                "content": $("#content").val(),
+                "author": Author_id
+            },function(result){
+                if (result == "1") {
+                    $(location).attr('href', '/');
+                }else{
+                    alert("请联系管理员，发表失败");
+                }
+            });
+        }
+        
 
     });
     $("#quanbushuoshuo").on("click",".detailBtn",function(){
